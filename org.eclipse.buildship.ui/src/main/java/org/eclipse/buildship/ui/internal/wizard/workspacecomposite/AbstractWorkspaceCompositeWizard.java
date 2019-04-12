@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 473545
- *     Sebastian Kuzniarz (Diebold Nixdorf Inc.) - refactored HelpContextIdProvider
+ *     Sebastian Kuzniarz (Diebold Nixdorf Inc.) - adaptation and customization for workspace composite wizard, refactored HelpContextIdProvider
  */
 
-package org.eclipse.buildship.ui.internal.wizard.project;
+package org.eclipse.buildship.ui.internal.wizard.workspacecomposite;
 
 import org.eclipse.buildship.core.internal.GradlePluginsRuntimeException;
 import org.eclipse.buildship.ui.internal.UiPlugin;
@@ -25,7 +25,7 @@ import com.google.common.base.Preconditions;
 /**
  * Base class for project wizards.
  */
-public abstract class AbstractProjectWizard extends Wizard implements HelpContextIdProvider {
+public abstract class AbstractWorkspaceCompositeWizard extends Wizard implements HelpContextIdProvider {
 
     // the preference key under which it is stored whether to show the welcome page or not
     private final String welcomePageEnabledPreferenceKey;
@@ -33,7 +33,7 @@ public abstract class AbstractProjectWizard extends Wizard implements HelpContex
     // state bit storing that the wizard is blocked to finish globally
     private boolean finishGloballyEnabled;
 
-    protected AbstractProjectWizard(String welcomePageEnabledPreferenceKey) {
+    protected AbstractWorkspaceCompositeWizard(String welcomePageEnabledPreferenceKey) {
         this.welcomePageEnabledPreferenceKey = Preconditions.checkNotNull(welcomePageEnabledPreferenceKey);
 
         // the wizard must not be finishable unless this global flag is enabled
