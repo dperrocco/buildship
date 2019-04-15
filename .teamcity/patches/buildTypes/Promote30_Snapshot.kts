@@ -123,4 +123,10 @@ changeBuildType(RelativeId("Promote30_Snapshot")) {
             enabled = false
         }
     }
+
+    requirements {
+        add {
+            matches("teamcity.agent.name", "dev(3|7)-agent1", "TEMPLATE_RQ_2")
+        }
+    }
 }
