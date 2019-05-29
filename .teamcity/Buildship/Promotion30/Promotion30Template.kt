@@ -36,5 +36,6 @@ object Promotion30Template : Template({
             onDependencyFailure = FailureAction.FAIL_TO_START
             onDependencyCancel = FailureAction.CANCEL
         }
+        snapshot(Buildship.Check30.CrossVersionCoverage.buildTypes.Eclipse47Java9, Buildship.Check30.Checkpoints.buildTypes.CheckpointUtils.DefaultFailureCondition)
     }
 })
