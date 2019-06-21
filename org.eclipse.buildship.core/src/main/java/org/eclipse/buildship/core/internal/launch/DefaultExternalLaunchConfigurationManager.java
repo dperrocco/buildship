@@ -33,6 +33,8 @@ import org.eclipse.buildship.core.internal.configuration.GradleProjectNatureConf
 import org.eclipse.buildship.core.internal.configuration.GradleProjectNatureDeconfiguredEvent;
 import org.eclipse.buildship.core.internal.event.Event;
 import org.eclipse.buildship.core.internal.event.EventListener;
+import org.eclipse.buildship.core.internal.preferences.PersistentModel;
+import org.eclipse.buildship.core.internal.util.gradle.GradleVersion;
 import org.eclipse.buildship.core.internal.workspace.ProjectCreatedEvent;
 import org.eclipse.buildship.core.internal.workspace.ProjectDeletedEvent;
 
@@ -93,11 +95,12 @@ public final class DefaultExternalLaunchConfigurationManager implements External
             }
 
             boolean isGradleProject = isGradleProject(configuration);
+            boolean supportsTestAttributes = supportsTestAttributes(configuration);
             boolean hasGradleClasspathProvider = hasGradleClasspathProvider(configuration);
 
-            if (isGradleProject && !hasGradleClasspathProvider) {
+            if (isGradleProject && !hasGradleClasspathProvider && !supportsTestAttributes) {
                 addGradleClasspathProvider(configuration);
-            } else if (!isGradleProject && hasGradleClasspathProvider) {
+            } else if ((!isGradleProject && hasGradleClasspathProvider) || supportsTestAttributes) {
                 removeGradleClasspathProvider(configuration);
             }
         } catch (CoreException e) {
@@ -108,6 +111,25 @@ public final class DefaultExternalLaunchConfigurationManager implements External
     private boolean isGradleProject(ILaunchConfiguration configuration) {
         IJavaProject javaProject = getJavaProject(configuration);
         return javaProject != null && GradleProjectNature.isPresentOn(javaProject.getProject());
+    }
+
+    private boolean supportsTestAttributes(ILaunchConfiguration configuration) {
+        IJavaProject javaProject = getJavaProject(configuration);
+        if (javaProject == null) {
+            return false;
+        }
+
+        IProject project = javaProject.getProject();
+        if (!GradleProjectNature.isPresentOn(project)) {
+            return false;
+        }
+
+        PersistentModel persistentModel = CorePlugin.modelPersistence().loadModel(project);
+        if (!persistentModel.isPresent()) {
+            return false;
+        }
+
+        return persistentModel.getGradleVersion().supportsTestAttributes();
     }
 
     private IJavaProject getJavaProject(ILaunchConfiguration configuration) {

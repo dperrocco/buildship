@@ -42,6 +42,7 @@ import org.eclipse.buildship.core.internal.launch.GradleRunConfigurationDelegate
 import org.eclipse.buildship.core.internal.marker.GradleErrorMarker
 import org.eclipse.buildship.core.internal.preferences.DefaultPersistentModel
 import org.eclipse.buildship.core.internal.preferences.PersistentModel
+import org.eclipse.buildship.core.internal.util.gradle.GradleVersion
 import org.eclipse.buildship.core.GradleDistribution
 import org.eclipse.buildship.core.internal.workspace.PersistentModelBuilder
 import org.eclipse.buildship.core.internal.workspace.WorkspaceOperations
@@ -212,7 +213,7 @@ abstract class WorkspaceSpecification extends Specification {
     }
 
     protected PersistentModel emptyPersistentModel(IProject project) {
-        new DefaultPersistentModel(project, new Path("build"), new Path("build.gradle"), [], [], [], [], [], [], false)
+        new DefaultPersistentModel(project, new Path("build"), new Path("build.gradle"), [], [], [], [], [], [], false, GradleVersion.version('5.6'))
     }
 
     protected ILaunchConfigurationWorkingCopy createLaunchConfig(String id, String name = 'launch-config') {

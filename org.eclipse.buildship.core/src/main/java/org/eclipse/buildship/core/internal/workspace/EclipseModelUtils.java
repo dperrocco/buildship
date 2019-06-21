@@ -42,9 +42,9 @@ public final class EclipseModelUtils {
     public static Collection<EclipseProject> queryModels(ProjectConnection connection) {
         BuildEnvironment buildEnvironment = connection.getModel(BuildEnvironment.class);
         GradleVersion gradleVersion = GradleVersion.version(buildEnvironment.getGradle().getGradleVersion());
-        if (supportsSendingReservedProjects(gradleVersion)) {
+        if (gradleVersion.supportsSendingReservedProjects()) {
             return queryCompositeModelWithRuntimInfo(connection, gradleVersion);
-        } else if (supportsCompositeBuilds(gradleVersion)) {
+        } else if (gradleVersion.supportsCompositeBuilds()) {
             return queryCompositeModel(EclipseProject.class, connection);
         } else {
             return ImmutableList.of(queryModel(EclipseProject.class, connection));
@@ -54,11 +54,11 @@ public final class EclipseModelUtils {
     public static Collection<EclipseProject> runTasksAndQueryModels(ProjectConnection connection) {
         BuildEnvironment buildEnvironment = connection.getModel(BuildEnvironment.class);
         GradleVersion gradleVersion = GradleVersion.version(buildEnvironment.getGradle().getGradleVersion());
-        if (supportsSendingReservedProjects(gradleVersion)) {
+        if (gradleVersion.supportsSendingReservedProjects()) {
             return runTasksAndQueryCompositeModelWithRuntimInfo(connection, gradleVersion);
-        } else if (supportsSyncTasksInEclipsePluginConfig(gradleVersion)) {
+        } else if (gradleVersion.supportsSyncTasksInEclipsePluginConfig()) {
             return runTasksAndQueryCompositeModel(connection, gradleVersion);
-        } else if (supportsCompositeBuilds(gradleVersion)) {
+        } else if (gradleVersion.supportsCompositeBuilds()) {
             return queryCompositeModel(EclipseProject.class, connection);
         } else {
             return ImmutableList.of(queryModel(EclipseProject.class, connection));
@@ -70,18 +70,6 @@ public final class EclipseModelUtils {
         List<EclipseWorkspaceProject> projects = allWorkspaceProjects.stream().map(p -> new DefaultEclipseWorkspaceProject(p.getName(), p.getLocation().toFile()))
                 .collect(Collectors.toList());
         return new EclipseRuntimeConfigurer(new DefaultEclipseWorkspace(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile(), projects));
-    }
-
-    private static boolean supportsSendingReservedProjects(GradleVersion gradleVersion) {
-        return gradleVersion.getBaseVersion().compareTo(GradleVersion.version("5.5")) >= 0;
-    }
-
-    private static boolean supportsSyncTasksInEclipsePluginConfig(GradleVersion gradleVersion) {
-        return gradleVersion.getBaseVersion().compareTo(GradleVersion.version("5.4")) >= 0;
-    }
-
-    private static boolean supportsCompositeBuilds(GradleVersion gradleVersion) {
-        return gradleVersion.getBaseVersion().compareTo(GradleVersion.version("3.3")) >= 0;
     }
 
     private static Collection<EclipseProject> runTasksAndQueryCompositeModelWithRuntimInfo(ProjectConnection connection, GradleVersion gradleVersion) {
