@@ -1,11 +1,13 @@
-package Buildship.Check30.BasicTestCoverage.Linux.buildTypes
+package Buildship.Check30.FullTestCoverage.Linux.buildTypes
 
+import Buildship.Check30.Checkpoints.buildTypes.BasicTestCoverage
 import Buildship.EclipseBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2018_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2018_2.FailureAction
 
 object Eclipse411 : BuildType({
-    id("Basic_Test_Coverage_Linux_Eclipse411_Java8_30")
-    name = "Basic Test Coverage (Linux, Eclipse 2019-03, Java 8)"
+    id("Full_Test_Coverage_Linux_Eclipse411_Java8_30")
+    name = "Full Test Coverage (Linux, Eclipse 2019-03, Java 8)"
 
     templates(EclipseBuildTemplate)
 
@@ -13,8 +15,14 @@ object Eclipse411 : BuildType({
         param("eclipse.version", "411")
         param("compiler.location", "%linux.java8.oracle.64bit%/bin/javac")
         param("eclipse.test.java.home", "%linux.java8.oracle.64bit%")
-        param("gradle.tasks", "clean eclipseTest")
         param("env.JAVA_HOME", "%linux.java8.oracle.64bit%")
+    }
+
+    dependencies {
+        snapshot(BasicTestCoverage) {
+            onDependencyFailure = FailureAction.CANCEL
+            onDependencyCancel = FailureAction.CANCEL
+        }
     }
 
     requirements {
